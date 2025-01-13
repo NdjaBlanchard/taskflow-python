@@ -29,3 +29,8 @@ Follow these steps to get started with TaskFlow-Python:
    ```bash
    git clone https://github.com/NdjaBlanchard/taskflow-python.git
    cd taskflow-python
+
+2. **Clone the Repository**:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
