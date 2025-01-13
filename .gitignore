@@ -1,0 +1,20 @@
+# Ignorer les fichiers générés par l'IDE
+*.log
+*.swp
+.idea/
+.vscode/
+
+# Ignorer les fichiers compilés
+*.class
+*.pyc
+*.o
+*.out
+
+# Ignorer les dossiers spécifiques
+node_modules/
+dist/
+build/
+
+# Ignorer les fichiers sensibles
+.env
+
