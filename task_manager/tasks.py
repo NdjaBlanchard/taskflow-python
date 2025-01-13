@@ -1,5 +1,11 @@
-from .utils import generate_id
-from .database import get_connection
+import os
+import sys
+
+# Adding parent path for task_manager and taskflow directories
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from task_manager.utils import generate_id
+from task_manager.database import get_connection
 import json
 import csv
 
@@ -130,18 +136,34 @@ class TaskManager:
         
             with open(file_path, "r", newline="", encoding="utf-8") as csv_file:
                     reader = csv.DictReader(csv_file)
-                    task = [row for row in reader]
+                    tasks = [row for row in reader]
         
         else:
             raise ValueError("Format not supported. Use 'json' or 'csv'")
         
         # Add each task to the database
         for task in tasks:
-            self.add_task(
+                      
+            task_id =  self.add_task(
                 title=task["title"],
                 description=task["description"],
                 priority=task["priority"]
             )
             
             if task["completed"] == "True" or task["completed"] is True:
-                self.mark_as_completed(task[id])
+                self.mark_as_completed(task_id)
+                
+    def list_tasks_sorted(self, sort_by="priority"):
+        """
+        Returns all sorted tasks.
+        :param sort_by: Sort criteria ("priority", "completed", "title").
+        """
+        tasks = self.list_tasks()
+        if sort_by == "priority":
+            return sorted(tasks, key=lambda x: x["priority"], reverse=True)
+        elif sort_by == "completed":
+            return sorted(tasks, key=lambda x: x["completed"])
+        elif sort_by == "title":
+            return sorted(tasks, key=lambda x: x["title"].lower())
+        else:
+            raise ValueError("Invalid sort criteria. Use 'priority', 'completed' or 'title'.")
