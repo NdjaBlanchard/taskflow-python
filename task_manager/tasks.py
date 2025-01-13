@@ -1,5 +1,8 @@
 from .utils import generate_id
 from .database import get_connection
+import json
+import csv
+
 
 class TaskManager:
     def __init__(self):
@@ -91,3 +94,54 @@ class TaskManager:
             }
             for row in rows
         ]
+        
+    def export_tasks(self, file_path, file_format="json"):
+        """
+         Exports tasks to a JSON or CSV file.
+        :param file_path: Path of file to be exported.
+        :param file_format: File format ("json" or "csv").
+        """
+        
+        tasks = self.list_tasks()
+        if file_format == "json":
+            with open(file_path, "w", encoding="utf-8") as json_file:
+                json.dump(tasks, json_file, ensure_ascii=False, indent=4)
+        elif file_format == "csv":
+            with open(file_path, "w", newline="", encoding="utf-8") as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=["id", "title", "description", "priority", "completed"])
+                writer.writeheader()
+                writer.writerows(tasks)
+        else:
+            raise ValueError("Format non pris en charge. Utilisez 'json' ou 'csv'.")
+
+    def import_tasks(self, file_path, file_format="json"):
+        """
+        Imports tasks from a JSON or CSV file.
+        :param file_path: Path of file to be imported.
+        :param file_format: File format (“json” or “csv”).
+        """
+        
+        if file_format == "json":
+            
+            with open(file_path, "r", encoding="utf-8") as json_file:
+                tasks = json.load(json_file)
+                
+        elif file_format == "csv":
+        
+            with open(file_path, "r", newline="", encoding="utf-8") as csv_file:
+                    reader = csv.DictReader(csv_file)
+                    task = [row for row in reader]
+        
+        else:
+            raise ValueError("Format not supported. Use 'json' or 'csv'")
+        
+        # Add each task to the database
+        for task in tasks:
+            self.add_task(
+                title=task["title"],
+                description=task["description"],
+                priority=task["priority"]
+            )
+            
+            if task["completed"] == "True" or task["completed"] is True:
+                self.mark_as_completed(task[id])

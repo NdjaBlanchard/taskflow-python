@@ -16,7 +16,10 @@ def show_menu():
     print("4. Delete a task")
     print("5. Show all tasks")
     print("6. Filter tasks (by priority or status)")
-    print("7. Quit")
+    print("7. Export tasks (JSON or CSV)")
+    print("8. Import tasks (JSON or CSV)")
+    print("9. Sort tasks")
+    print("10. Quit")
     
 def add_task(manager):
     """Adding a new task"""
@@ -89,7 +92,38 @@ def filter_tasks(manager):
     except Exception as e:
         print(f"Error: {e}")
 
+def export_tasks(manager):
+    """Exports tasks to a JSON or CSV file."""
+    file_format = input("File format (json/csv): ").lower()
+    file_path = input("Path of file to be exported: ")
+    try:
+        manager.export_tasks(file_path, file_format)
+        print(f"Tasks successfully exported to {file_path}.")
+    except Exception as e:
+        print(f"Export error: {e}")
 
+def import_tasks(manager):
+    """Imports tasks from a JSON or CSV file."""
+    file_format = input("File format (json/csv): ").lower()
+    file_path = input("Path of file to be imported: ")
+    try:
+        manager.import_tasks(file_path, file_format)
+        print("Tasks imported successfully.")
+    except Exception as e:
+        print(f"Error while importing: {e}")
+
+def sort_tasks(manager):
+    """Sorts tasks by a specific criterion."""
+    sort_by = input("Sort by (priority/completed/title): ").lower()
+    try:
+        sorted_tasks = manager.list_tasks_sorted(sort_by)
+        print("\nTasks sorted:")
+        for task in sorted_tasks:
+            print(f"ID: {task['id']}, Title: {task['title']}, Priority: {task['priority']}, Completed: {task['completed']}")
+    except Exception as e:
+        print(f"Error : {e}")
+        
+        
 def main():
     """CLI application's main entry point."""
     manager = TaskManager()
@@ -111,6 +145,12 @@ def main():
         elif choice == "6":
             filter_tasks(manager)
         elif choice == "7":
+            export_tasks(manager)
+        elif choice == "8":
+            import_tasks(manager)
+        elif choice == "9":
+            sort_tasks(manager)
+        elif choice == "10":
             print("GoodBye !")
             sys.exit()
         else:
